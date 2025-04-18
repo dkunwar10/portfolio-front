@@ -1,6 +1,7 @@
+
 import { useState, useEffect, useRef } from "react";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { MessageCircle, X, Search, Send } from "lucide-react";
 
 // Fun developer-friendly placeholder messages
