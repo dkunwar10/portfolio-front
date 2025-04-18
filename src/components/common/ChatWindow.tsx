@@ -82,13 +82,15 @@ export const ChatWindow = () => {
   }, [isOpen]);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-6 right-6 z-50">
       {!isOpen ? (
         <Button
           onClick={() => setIsOpen(true)}
-          className="rounded-full w-16 h-16 shadow-lg hover:shadow-xl transition-transform hover:scale-105"
+          className="rounded-full w-16 h-16 flex items-center justify-center transition-all hover:scale-105 animate-slow-pulse bg-transparent hover:bg-transparent border-0"
         >
-          <MessageCircle size={28} />
+          {/* <MessageCircle size={50} className="text-blue-600" strokeWidth={2.5} /> */}
+          <MessageCircle style={{ color: 'white', strokeWidth: 2,width: 30, height: 30 }} size={30}/>
+
         </Button>
       ) : (
         <Card className="w-[490px] h-[550px] flex flex-col shadow-xl animate-in fade-in duration-300 slide-in-from-bottom-5">

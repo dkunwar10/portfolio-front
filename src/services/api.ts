@@ -1,30 +1,18 @@
 
-import axios from 'axios';
+/**
+ * @deprecated This file is kept for backward compatibility.
+ * Please use the new services: apiService, githubService, and linkedinService.
+ */
 
-const API_URL = 'https://api.example.com'; // Replace with your actual API endpoint
+import apiService, { ProfileData } from './apiService';
 
-export interface ProfileData {
-  profile: {
-    name: string;
-    headline: string;
-    location: string;
-    industry: string;
-    summary: string;
-    picture: string;
-    publicIdentifier: string;
-    address: string;
-    birthDate: Record<string, unknown>;
-    Urls: {
-      name: string;
-      url: string;
-    }[];
-  };
-}
+// Re-export the ProfileData interface for backward compatibility
+export type { ProfileData };
 
+// Legacy getProfile function that uses the new apiService
 export const getProfile = async (): Promise<ProfileData> => {
   try {
-    const response = await axios.get<ProfileData>(`${API_URL}/profile`);
-    return response.data;
+    return await apiService.getProfile();
   } catch (error) {
     console.error('Error fetching profile data:', error);
     // Return mock data as fallback
@@ -52,6 +40,7 @@ export const getProfile = async (): Promise<ProfileData> => {
   }
 };
 
+// Legacy profileService object that uses the new apiService
 export const profileService = {
   getProfile
 };

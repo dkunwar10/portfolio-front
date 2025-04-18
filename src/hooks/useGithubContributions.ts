@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { ContributionData } from '@/types/github';
+import githubService from '@/services/githubService';
 
 export const useGithubContributions = () => {
   const [contributionData, setContributionData] = useState<ContributionData | null>(null);
@@ -11,16 +12,29 @@ export const useGithubContributions = () => {
     const fetchContributions = async () => {
       try {
         setLoading(true);
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/github/contributions');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch contributions: ${response.status}`);
+
+        // Use githubService instead of direct fetch
+        const data = await githubService.getContributions(12, {
+          onSuccess: (responseData) => {
+            setContributionData(responseData);
+          },
+          onError: (err) => {
+            setError("Failed to load contribution data");
+            console.error(err);
+          },
+          onFinally: () => {
+            setLoading(false);
+          }
+        });
+
+        // Set data in case it wasn't set in the callback
+        if (!contributionData) {
+          setContributionData(data);
         }
-        const data = await response.json();
-        setContributionData(data);
       } catch (err) {
+        // This catch block is a fallback in case the onError callback doesn't execute
         setError("Failed to load contribution data");
         console.error(err);
-      } finally {
         setLoading(false);
       }
     };
