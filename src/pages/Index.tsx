@@ -8,6 +8,7 @@ import ProfessionalJourney from '@/components/sections/ProfessionalJourney';
 import TechnicalExpertise from '@/components/sections/TechnicalExpertise';
 import GitHubActivity from '@/components/sections/GitHubActivity';
 import { ChatWindow } from '@/components/common/ChatWindow';
+import Certificates from '@/components/sections/Certificates';
 
 const Index = () => {
   useEffect(() => {
@@ -27,6 +28,7 @@ const Index = () => {
           <ProfessionalJourney />
           <TechnicalExpertise />
           <GitHubActivity />
+          <Certificates />
         </main>
         
         <Footer />

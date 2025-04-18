@@ -16,6 +16,8 @@ const Navigation = () => {
     { id: 'hero', label: 'Home' },
     { id: 'professional-journey', label: 'Professional Journey' },
     { id: 'technical-expertise', label: 'Technical Expertise' },
+    { id: 'github-activity', label: 'GitHub' },
+    { id: 'certificates', label: 'Certificates' },
   ];
 
   useEffect(() => {
