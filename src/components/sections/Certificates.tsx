@@ -126,9 +126,6 @@ const Certificates = () => {
                     <div className="space-y-2 mb-4">
                       <p className="text-gray-400 text-sm">{cert.authority}</p>
                       <p className="text-gray-500 text-sm">{cert.formattedDate || `Issued ${cert.issueYear}`}</p>
-                      {cert.credentialId && (
-                        <p className="text-gray-600 text-xs">Credential ID: {cert.credentialId}</p>
-                      )}
                     </div>
 
                     <div className="flex flex-wrap gap-2">
