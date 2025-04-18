@@ -1,146 +1,17 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Calendar, GitCommit, GitPullRequest, AlertCircle, CheckCircle2, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
-// Define types for our contribution data
-interface ContributionDay {
-  date: string;
-  count: number;
-  level: number;
-}
-
-interface ActivityBreakdown {
-  commits: { count: number; percentage: number };
-  pull_requests: { count: number; percentage: number };
-  issues: { count: number; percentage: number };
-  code_reviews: { count: number; percentage: number };
-}
-
-interface Repository {
-  name: string;
-  url: string;
-  stars: number;
-  language: string | null;
-}
-
-interface ContributionData {
-  total_contributions: number;
-  activity_breakdown: ActivityBreakdown;
-  contribution_calendar: ContributionDay[];
-  monthly_contributions?: { month: string; year: string; count: number }[];
-  contributed_repositories?: Repository[];
-}
+import React from 'react';
+import { motion } from 'framer-motion';
+import { AlertCircle, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useGithubContributions } from '@/hooks/useGithubContributions';
+import { getWeeksArray, getLevelColor, formatDate } from '@/utils/contributionUtils';
+import ContributionHeader from '@/components/github/ContributionHeader';
+import ActivityBreakdown from '@/components/github/ActivityBreakdown';
 
 export const ContributionsChart = () => {
-  const [contributionData, setContributionData] = useState<ContributionData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchContributions = async () => {
-      try {
-        setLoading(true);
-        // Fetch from the API endpoint using our utility
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/github/contributions');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch contributions: ${response.status}`);
-        }
-        const data = await response.json();
-
-        setContributionData(data);
-      } catch (err) {
-        setError("Failed to load contribution data");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchContributions();
-  }, []);
-
-  // Group contributions by week for display
-  const getWeeksArray = (contributions: ContributionDay[]) => {
-    const weeks: ContributionDay[][] = [];
-    let currentWeek: ContributionDay[] = [];
-
-    // Get the day of week for the first date (0 = Sunday, 6 = Saturday)
-    const firstDate = new Date(contributions[0].date);
-    const firstDayOfWeek = firstDate.getDay();
-
-    // Add empty cells for the first week
-    for (let i = 0; i < firstDayOfWeek; i++) {
-      currentWeek.push({
-        date: "",
-        count: 0,
-        level: -1 // Use -1 to indicate an empty cell
-      });
-    }
-
-    // Add all contributions
-    contributions.forEach((day) => {
-      currentWeek.push(day);
-
-      // Check if we've completed a week
-      if (currentWeek.length === 7) {
-        weeks.push(currentWeek);
-        currentWeek = [];
-      }
-    });
-
-    // Add the last partial week if it exists
-    if (currentWeek.length > 0) {
-      weeks.push(currentWeek);
-    }
-
-    return weeks;
-  };
-
-  // Get color based on contribution level
-  const getLevelColor = (level: number, isDarkMode: boolean) => {
-    if (level === -1) return "bg-transparent"; // Empty cell
-
-    if (isDarkMode) {
-      switch (level) {
-        case 0: return "bg-gray-800 border border-gray-700";
-        case 1: return "bg-green-900 border border-green-800";
-        case 2: return "bg-green-700 border border-green-600";
-        case 3: return "bg-green-600 border border-green-500";
-        case 4: return "bg-green-500 border border-green-400";
-        default: return "bg-gray-800 border border-gray-700";
-      }
-    } else {
-      switch (level) {
-        case 0: return "bg-gray-100 border border-gray-200";
-        case 1: return "bg-green-100 border border-green-200";
-        case 2: return "bg-green-300 border border-green-400";
-        case 3: return "bg-green-500 border border-green-600";
-        case 4: return "bg-green-700 border border-green-800";
-        default: return "bg-gray-100 border border-gray-200";
-      }
-    }
-  };
-
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "";
-
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
+  const { contributionData, loading, error } = useGithubContributions();
+  
   if (loading) {
     return (
       <div className="p-8 bg-white dark:bg-slate-800 rounded-xl shadow-md animate-pulse">
@@ -169,37 +40,13 @@ export const ContributionsChart = () => {
 
   return (
     <div className="p-8 bg-white dark:bg-slate-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-1">
-            GitHub Contributions
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            {contributionData.total_contributions} contributions in the last 90 days
-          </p>
-        </div>
-
-        <div className="flex items-center mt-4 md:mt-0 space-x-4">
-          <div className="flex items-center">
-            <GitCommit size={16} className="text-green-600 dark:text-green-400 mr-1" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              {contributionData.activity_breakdown.commits.count} commits
-            </span>
-          </div>
-          <div className="flex items-center">
-            <GitPullRequest size={16} className="text-purple-600 dark:text-purple-400 mr-1" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              {contributionData.activity_breakdown.pull_requests.count} PRs
-            </span>
-          </div>
-        </div>
-      </div>
+      <ContributionHeader data={contributionData} />
 
       {/* Contribution graph */}
       <div className="overflow-x-auto">
         <div className="min-w-[700px]">
           <div className="flex mb-2">
-            <div className="w-8"></div> {/* Empty space for alignment */}
+            <div className="w-8"></div>
             <div className="flex justify-between w-full text-xs text-gray-500 dark:text-gray-400">
               <span>Mon</span>
               <span>Wed</span>
@@ -255,40 +102,7 @@ export const ContributionsChart = () => {
         </div>
       </div>
 
-      {/* Activity breakdown */}
-      <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-          Activity Breakdown
-        </h4>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.entries(contributionData.activity_breakdown).map(([key, value]) => (
-            <div key={key} className="flex items-center">
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mr-2">
-                <motion.div
-                  className={`h-2.5 rounded-full ${
-                    key === 'commits' ? 'bg-green-600 dark:bg-green-500' :
-                    key === 'pull_requests' ? 'bg-purple-600 dark:bg-purple-500' :
-                    key === 'issues' ? 'bg-yellow-600 dark:bg-yellow-500' :
-                    'bg-blue-600 dark:bg-blue-500'
-                  }`}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${value.percentage}%` }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                />
-              </div>
-              <div className="flex justify-between items-center min-w-[120px]">
-                <span className="text-xs text-gray-600 dark:text-gray-400 capitalize">
-                  {key.replace('_', ' ')}
-                </span>
-                <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
-                  {value.percentage}%
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <ActivityBreakdown data={contributionData.activity_breakdown} />
 
       {/* Contributed repositories */}
       {contributionData.contributed_repositories && contributionData.contributed_repositories.length > 0 && (
