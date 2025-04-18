@@ -6,9 +6,10 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import ProfessionalJourney from '@/components/sections/ProfessionalJourney';
 import TechnicalExpertise from '@/components/sections/TechnicalExpertise';
+import GitHubActivity from '@/components/sections/GitHubActivity';
+import { ChatWindow } from '@/components/common/ChatWindow';
 
 const Index = () => {
-  // Set dark background on body
   useEffect(() => {
     document.body.className = 'bg-gray-900';
     return () => {
@@ -25,9 +26,11 @@ const Index = () => {
           <Hero />
           <ProfessionalJourney />
           <TechnicalExpertise />
+          <GitHubActivity />
         </main>
         
         <Footer />
+        <ChatWindow />
       </div>
     </ProfileProvider>
   );
