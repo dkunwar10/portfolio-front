@@ -94,7 +94,7 @@ class LinkedInService {
     if (options?.dispatch) {
       options.dispatch(linkedinCertificatesActions.request());
       
-      return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates', undefined, undefined, {
+      return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates/', undefined, undefined, {
         ...options,
         onSuccess: (data) => {
           options.dispatch(linkedinCertificatesActions.success(data));
@@ -107,7 +107,7 @@ class LinkedInService {
       });
     }
     
-    return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates', undefined, undefined, options);
+    return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates/', undefined, undefined, options);
   }
 
   // Get LinkedIn skills

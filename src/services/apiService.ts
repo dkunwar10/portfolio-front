@@ -347,7 +347,7 @@ class ApiService {
     if (options?.dispatch) {
       options.dispatch(linkedinCertificatesActions.request());
 
-      return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates', undefined, undefined, {
+      return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates/', undefined, undefined, {
         ...options,
         onSuccess: (data) => {
           options.dispatch(linkedinCertificatesActions.success(data));
@@ -360,7 +360,7 @@ class ApiService {
       });
     }
 
-    return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates', undefined, undefined, options);
+    return httpBase.get<LinkedInCertificate[]>('/linkedin/certificates/', undefined, undefined, options);
   }
 
   async getLinkedInSkills(options?: RequestOptions<string[]>): Promise<string[]> {
