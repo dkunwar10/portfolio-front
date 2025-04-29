@@ -1,7 +1,6 @@
 
-import React from 'react';
 import { useProfile } from '@/store/ProfileContext';
-import { Github, Linkedin, Mail, ExternalLink } from 'lucide-react';
+import { Github as GitHubIcon, Linkedin as LinkedInIcon, Mail as MailIcon, ExternalLink, Phone as PhoneIcon, BookOpen as BookIcon } from 'lucide-react';
 
 const Footer = () => {
   const { profileData } = useProfile();
@@ -10,12 +9,32 @@ const Footer = () => {
 
   const currentYear = new Date().getFullYear();
 
-  const socialLinks = [
-    { name: 'GitHub', icon: Github, url: urls.find(u => u.name === 'GitHub')?.url },
-    { name: 'LinkedIn', icon: Linkedin, url: urls.find(u => u.name === 'LinkedIn')?.url },
-    { name: 'Email', icon: Mail, url: urls.find(u => u.name === 'Email')?.url },
-    { name: 'Website', icon: ExternalLink, url: urls.find(u => u.name === 'Website')?.url },
-  ].filter(link => link.url);
+  // Map URL names to icons
+  const getIconForUrl = (urlName: string) => {
+    switch (urlName) {
+      case 'GitHub':
+        return GitHubIcon;
+      case 'LinkedIn':
+        return LinkedInIcon;
+      case 'Email':
+        return MailIcon;
+      case 'Website':
+        return ExternalLink;
+      case 'Hugging Face':
+        return BookIcon;
+      case 'Phone':
+        return PhoneIcon;
+      default:
+        return ExternalLink;
+    }
+  };
+
+  // Create social links from all URLs in the profile data
+  const socialLinks = urls.map(url => ({
+    name: url.name,
+    icon: getIconForUrl(url.name),
+    url: url.url
+  }));
 
   return (
     <footer className="bg-gray-900 text-gray-400 py-8 border-t border-gray-800">
@@ -26,10 +45,10 @@ const Footer = () => {
               © {currentYear} {name}. All rights reserved.
             </p>
           </div>
-          
+
           <div className="flex space-x-6">
             {socialLinks.map((link) => (
-              <a 
+              <a
                 key={link.name}
                 href={link.url}
                 target="_blank"
@@ -41,7 +60,7 @@ const Footer = () => {
               </a>
             ))}
           </div>
-          
+
           <div className="mt-4 md:mt-0 flex space-x-6 text-sm">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

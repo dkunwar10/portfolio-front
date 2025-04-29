@@ -96,6 +96,21 @@ export default {
 				'fade-in-left': {
 					from: { opacity: '0', transform: 'translateX(-20px)' },
 					to: { opacity: '1', transform: 'translateX(0)' }
+				},
+				'heartbeat': {
+					'0%': { transform: 'scale(1)' },
+					'14%': { transform: 'scale(1.3)' },
+					'28%': { transform: 'scale(1)' },
+					'42%': { transform: 'scale(1.3)' },
+					'70%': { transform: 'scale(1)' },
+					'100%': { transform: 'scale(1)' }
+				},
+				'slow-pulse': {
+					'0%, 100%': { transform: 'scale(1)', opacity: '1' },
+					'20%': { transform: 'scale(1.15)', opacity: '1' },
+					'40%': { transform: 'scale(1)', opacity: '1' },
+					'60%': { transform: 'scale(1)', opacity: '0.8' },
+					'80%': { transform: 'scale(1)', opacity: '0.8' }
 				}
 			},
 			animation: {
@@ -103,7 +118,9 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out forwards',
 				'fade-in-right': 'fade-in-right 0.5s ease-out forwards',
-				'fade-in-left': 'fade-in-left 0.5s ease-out forwards'
+				'fade-in-left': 'fade-in-left 0.5s ease-out forwards',
+				'heartbeat': 'heartbeat 1s ease-in-out infinite',
+				'slow-pulse': 'slow-pulse 4s ease-in-out infinite'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
